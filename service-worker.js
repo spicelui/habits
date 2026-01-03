@@ -1,7 +1,7 @@
 const CACHE_NAME = "habit-tracker-v1";
 const ASSETS = [
   "./",
-  "./index.html",
+  "./h.html",
   "./manifest.json"
 ];
 
@@ -24,3 +24,4 @@ self.addEventListener("fetch", event => {
     caches.match(event.request).then(res => res || fetch(event.request))
   );
 });
+
