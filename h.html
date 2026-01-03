@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json">
+   <meta name="theme-color" content="#000000">
+
+  <title>Habit Tracker</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont; }
+    body { margin: 0; background: #f5f5f5; }
+    .app { max-width: 420px; margin: auto; padding: 16px; }
+    h1 { margin-bottom: 12px; }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,.06);
+      cursor: pointer;
+    }
+
+    .toggle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #000;
+    }
+    .toggle.done { background: #000; }
+
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #000;
+      color: white;
+      font-size: 28px;
+      border: none;
+    }
+
+    .sheet {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: none;
+      align-items: flex-end;
+    }
+
+    .sheet.open { display: flex; }
+
+    .sheet-content {
+      background: white;
+      width: 100%;
+      border-radius: 24px 24px 0 0;
+      padding: 16px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      margin-bottom: 8px;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .weekdays, .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .day {
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      background: #e5e5e5;
+    }
+
+    .day.done {
+      background: #000;
+      color: white;
+    }
+
+    .danger { border-color: #e53935; color: #e53935; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Hábitos</h1>
+    <div id="habitList"></div>
+  </div>
+
+  <button class="fab" onclick="openCreateSheet()">+</button>
+
+  <!-- Crear hábito -->
+  <div class="sheet" id="createSheet">
+    <div class="sheet-content">
+      <h3>Nuevo hábito</h3>
+      <input id="habitName" placeholder="Nombre del hábito" />
+      <select id="freqType">
+        <option value="daily">Veces al día</option>
+        <option value="weekly">Veces a la semana</option>
+      </select>
+      <input id="freqCount" type="number" min="1" value="1" />
+      <button onclick="addHabit()">Crear</button>
+      <button onclick="closeSheets()">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Ver hábito -->
+  <div class="sheet" id="viewSheet">
+    <div class="sheet-content">
+      <h3 id="viewTitle"></h3>
+      <p id="viewStreak"></p>
+
+      <div class="calendar-header">
+        <button onclick="prevMonth()">‹</button>
+        <strong id="monthLabel"></strong>
+        <button onclick="nextMonth()">›</button>
+      </div>
+
+      <div class="weekdays">
+        <div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div>
+      </div>
+      <div class="calendar" id="calendar"></div>
+
+      <button class="danger" onclick="deleteHabit()">Eliminar hábito</button>
+      <button onclick="closeSheets()">Cerrar</button>
+    </div>
+  </div>
+
+<script>
+const STORAGE_KEY = "habit-tracker-data";
+let habits = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+let currentHabit = null;
+let currentMonth = new Date();
+
+const monthNames = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+const save = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+const todayStr = () => new Date().toISOString().slice(0,10);
+
+function renderHabits() {
+  const list = document.getElementById("habitList");
+  list.innerHTML = "";
+  habits.forEach(h => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div>
+        <strong>${h.name}</strong><br>
+        <small>Racha: ${calcStreak(h.logs)} días</small>
+      </div>
+      <div class="toggle ${h.logs.includes(todayStr()) ? 'done' : ''}"></div>
+    `;
+    card.onclick = () => openViewSheet(h.id);
+    card.querySelector('.toggle').onclick = (e) => {
+      e.stopPropagation();
+      toggleToday(h.id);
+    };
+    list.appendChild(card);
+  });
+}
+
+function calcStreak(logs) {
+  let streak = 0;
+  const set = new Set(logs);
+  let d = new Date();
+  while (set.has(d.toISOString().slice(0,10))) {
+    streak++;
+    d.setDate(d.getDate() - 1);
+  }
+  return streak;
+}
+
+function toggleToday(id) {
+  const h = habits.find(x => x.id === id);
+  const t = todayStr();
+  h.logs = h.logs.includes(t) ? h.logs.filter(d => d !== t) : [...h.logs, t];
+  save();
+  renderHabits();
+}
+
+function openCreateSheet() {
+  document.getElementById("createSheet").classList.add("open");
+}
+
+function openViewSheet(id) {
+  currentHabit = habits.find(h => h.id === id);
+  document.getElementById("viewSheet").classList.add("open");
+  renderView();
+}
+
+function closeSheets() {
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open'));
+}
+
+function addHabit() {
+  const name = habitName.value.trim();
+  if (!name) return;
+  habits.push({
+    id: crypto.randomUUID(),
+    name,
+    freqType: freqType.value,
+    freqCount: +freqCount.value,
+    logs: []
+  });
+  save();
+  closeSheets();
+  renderHabits();
+}
+
+function renderView() {
+  viewTitle.textContent = currentHabit.name;
+  viewStreak.textContent = `Racha actual: ${calcStreak(currentHabit.logs)} días`;
+  monthLabel.textContent = `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+  renderCalendar();
+}
+
+function renderCalendar() {
+  calendar.innerHTML = "";
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const first = new Date(year, month, 1);
+  const start = (first.getDay() + 6) % 7;
+  const days = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 0; i < start; i++) calendar.appendChild(document.createElement('div'));
+
+  for (let d = 1; d <= days; d++) {
+    const date = new Date(year, month, d).toISOString().slice(0,10);
+    const cell = document.createElement('div');
+    cell.className = 'day' + (currentHabit.logs.includes(date) ? ' done' : '');
+    cell.textContent = d;
+    calendar.appendChild(cell);
+  }
+}
+
+function prevMonth() { currentMonth.setMonth(currentMonth.getMonth() - 1); renderView(); }
+function nextMonth() { currentMonth.setMonth(currentMonth.getMonth() + 1); renderView(); }
+
+function deleteHabit() {
+  habits = habits.filter(h => h.id !== currentHabit.id);
+  save();
+  closeSheets();
+  renderHabits();
+}
+
+renderHabits();
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+</script>
+
+</body>
+</html>
