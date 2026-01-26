@@ -10,7 +10,7 @@
 
 @font-face {
     font-family: 'sf';
-    src: url('../SF-Pro.ttf') format('truetype');
+    src: url('./SF-Pro.ttf') format('truetype');
 }
 @font-face {
     font-family: 'streak';
@@ -990,4 +990,5 @@ hr{
     font-size: 21px;
     font-weight: 600;
     margin: 12px 0 0px 12px;
+
 }
