@@ -39,55 +39,60 @@ input:focus::placeholder{
 html, body {
   touch-action: pan-x pan-y;
 }
-
+html{
+    font: -apple-system-body;
+}
 body {
     margin: 0;
     background: white;
     color: var(--text-main);
     padding-bottom: 100px;
     padding: 0;
+    padding-top: env(safe-area-inset-top); /* deja espacio arriba para la status bar */
 }
+
 #dateSelector input {
     -webkit-appearance: none;
     width: auto;
-    border: none;
-    background: #00000008;
-    padding: 10px 16px;
-    border-radius: 19px;
+    border: 1px solid #ffffff8a;
+    background: #ececec36;
+    backdrop-filter: blur(4px) saturate(1.5) brightness(1.14);
+    box-shadow: inset 0 0 8px 0px #0000002c, 0 0 18px 0 #00000011;
+    padding: 0.4rem 0.8rem;
+    border-radius: 1.3rem;
     font-weight: 430;
-    font-size: 16px;
-    color: #0000005e; 
-    
-    backdrop-filter: blur(14px);
+    font-size: 1.01rem;
+    color: #00000077; 
     transition: 400ms;
 }
 #dateSelector input:focus{
-    background: #0000000b;
-    scale: 90%;
-    color: #0000006f;
+    color: #0000007b; 
+    scale: 96%;
 }
 
 main {
-    padding: 0 26px;
-    margin-top: -12px;
+    padding: env(safe-area-inset-top) 26px 0 26px;
+    margin-top: 0;
 }
+
 
 /* --- Action Button --- */
 
 #addHabitBtn {
-    width: 50px;
-    height: 50px;
-    border-radius: 30px;
-    background: var(--primary);
-    color: white;
+    width: 3.76rem;
+    height: 3.76rem;
+    border-radius: 50%;
+    background: #00000060;
+    backdrop-filter: blur(18px) contrast(1.3) brightness(0.4) saturate(10);
+    color: rgb(255, 255, 255);
     border: none;
     font-family: 'sf';
-    font-size: 24px;
+    font-size: 1.41rem;
     font-weight: 600;
     z-index: 90;
     position: fixed;
-    bottom: 30px;
-    left: calc(50% - 25px);
+    bottom: 74px;
+    left: calc(50% - 1.5rem);
 }
 @keyframes scaleClick {
   0% { transform: scale(1); }
@@ -120,9 +125,25 @@ main {
 .sheetContent.closing {
     transition: transform 400ms cubic-bezier(.42,.3,.26,.99); /* close */
 }
+
 .sheetContent.active {
     transform: translateY(0);
-    box-shadow: 0px 14px 70px 0px #00000038;
+}
+
+/* Opcional: Oscurecer un poco la sheet de abajo cuando hay otra encima */
+#routineViewSheet.active {
+    filter: brightness(1);
+    transition: filter 0.3s;
+}
+
+/* Si activeSheet es diferente a routineViewSheet pero routineViewSheet existe en el DOM... */
+body:has(#viewSheet.active) #routineViewSheet,
+body:has(#streakSheet.active) #routineViewSheet,
+body:has(#iconPickerSheet.active) #routineViewSheet {
+    filter: brightness(0.9);
+    transition: 200ms;
+    transform: scale(0.95);
+    box-shadow: none;
 }
 #view{
     margin-bottom: 30%;
@@ -130,7 +151,7 @@ main {
 }
 .down{
     position: fixed;
-    bottom: 34px;
+    bottom: 44px;
     width: calc(100% - 32px);
     justify-content: center;
     box-sizing: border-box;
@@ -140,13 +161,12 @@ main {
     display:flex;
     justify-content:center;
     gap:10px;
-    margin-top:15px;
 }
 #createSheet{
    background-color: #f2f2f7;
 }
 .headerA{
-   font-size: 17.5px;
+   font-size: 1.03rem;
    padding: 0 0 13px 0;
    margin-bottom: 18px;
    margin-top: -1px;
@@ -157,7 +177,7 @@ main {
    background: #ffffff;
 }
 .headerB{
-   font-size: 17.5px;
+   font-size: 1.03rem;
    padding: 0 0 13px 0;
    margin-top: -1px;
    font-weight: 540;
@@ -167,8 +187,8 @@ main {
    background: #f2f2f5;
 }
 .headerIcons{
-   font-size: 17.5px;
-   padding: 0 0 28px 0;
+   font-size: 1.03rem;
+   padding: 0 0 8px 0;
    margin-top: -1px;
    font-weight: 540;
    text-align: center;
@@ -191,10 +211,10 @@ main {
    border-radius: 30px;
 }
 .btn-cancel{
-   width: 44px;
-   height:44px;
+   width: 46px;
+   height: 46px;
    border-radius: 50%;
-   font-size: 20px;
+   font-size: 1.25rem;
    font-family: 'sf';
    font-weight: 550;
    color: #999;
@@ -203,10 +223,10 @@ main {
    backdrop-filter: blur(10px);
 }
 .btn-action{
-   width: 44px;
-   height:44px;
+   width: calc(40px + 0.6rem);
+   height: calc(40px + 0.6rem);
    border-radius: 50%;
-   font-size: 20px;
+   font-size: 1.25rem;
    font-family: 'sf';
    font-weight: 550;
    color: white;
@@ -223,7 +243,7 @@ main {
    width: 44px;
    height:44px;
    border-radius: 50%;
-   font-size: 20px;
+   font-size: 1.25rem;
    font-family: 'sf';
    font-weight: 500;
    color: #444;
@@ -245,7 +265,7 @@ main {
     margin: 0 7px;
 }
 .single{
-   font-size: 20px;
+   font-size: 1.18rem;
    font-family: 'sf';
    font-weight: 500;
    color: #444;
@@ -279,15 +299,15 @@ main {
 .unitInputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 0.59rem;
 }
 .habito{
-    font-size: 24px;
+    font-size: 1.41rem;
     font-weight: 600;
     text-align: center;
 }
 #vUnitLabel{
-    font-size: 15.6px;
+    font-size: 0.91rem;
     color: #777;
     margin: 6px 0 20px 0;
 }
@@ -296,24 +316,15 @@ main {
 .iconTrigger {
     font-family: 'sf';
     font-weight: 590;
-    width: 80px;
-    height: 80px;
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
     background: #ffffff;
     margin: 0 auto 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-}
-
-.iconGrid {
-   font-family: 'sf';
-   display: grid;
-   grid-template-columns: repeat(6, 1fr);
-   gap: 15px;
-   margin: 0 26px;
-   margin-top: -14px;
+    font-size: 2rem;
 }
 
 .iconItem {
@@ -323,15 +334,21 @@ main {
     align-items: center;
     position: relative;
     justify-content: center;
-    font-size: 23px;
+    font-size: 1.35rem;
     font-weight: 599;
-    border-radius: 12px;
+    border-radius: 10px;
     background: transparent;
-    color: #969499;
+    width: 2.82rem;
+    height: 2.82rem;
+    color: #94909b;
+    transition: scale 200ms;
+    scale: 100%;
 }
 .iconItem.selected {
-    background: #3030300f;
+    background: #3030300a;
     border-radius: 12px;
+    filter: brightness(0.95);
+    scale: 108%;
 }
 
 .manualQtyInput {
@@ -344,7 +361,7 @@ main {
     color: black;
     font-weight: 600;
     border-radius: 11px;
-    font-size: 24px;
+    font-size: 1.41rem;
     transition: background 400ms, color 300ms;
 }
 .manualQtyInput:focus {
@@ -356,7 +373,7 @@ main {
     background: #f0f0f0;
     color: black;
     font-weight: 600;
-    font-size: 24px;
+    font-size: 1.41rem;
 }
 .qtyControls{
    display:flex;
@@ -364,6 +381,7 @@ main {
    justify-content: center;
    gap:40px;
    padding: 0 24px;
+   margin-bottom: 20%;
 }
 .btn {
     -webkit-appearance: none;
@@ -372,10 +390,9 @@ main {
     border-radius: 40px;
     border: none;
     font-family: 'sf';
-    font-size: 18px;
+    font-size: 1.05rem;
     color: #777;
     font-weight: 500;
-    margin-top: 10px;
 }
 .plusminus{
     -webkit-appearance: none;
@@ -421,7 +438,7 @@ main {
 
 
 #vIcon {
-    font-size: 32px;
+    font-size: 1.8rem;
     width: 56px;
     height: 56px;
     display: flex;
@@ -432,8 +449,10 @@ main {
 
 .botoncito {
     margin-left: 10px;
-    width: 40px;
-    height: 40px;
+    width: 2.3rem;
+    height: 2.3rem;
+    min-width: 2.3rem;
+    min-height: 2.3rem;
     border: none;
     border-radius: 50%;
     font-family: 'sf';
@@ -442,7 +461,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 /* --- Calendar Pro Mejorado --- */
@@ -450,12 +469,13 @@ main {
 .calGrid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
     text-align: center;
     align-items: center;
     justify-items: center;
-    box-sizing: border-box;
     width: 100%;
+    gap: 4px;
+    width: 100%; 
+    box-sizing: border-box;
 }
 .ring-fg {
     fill: none;
@@ -469,7 +489,6 @@ main {
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    max-width: 48px;   /* límite superior */
     height: 44px;
     display: flex;
     align-items: center;
@@ -499,8 +518,8 @@ main {
 }
 
 .habitName {
-    font-size: 17px;
-    font-weight: 520;
+    font-size: 1rem;
+    font-weight: 480;
 }
 
 .cont {
@@ -510,19 +529,19 @@ main {
 }
 .details{
     display: flex;
+    flex-direction: column;
+    gap: 1px;
     width: 100%;
-    justify-content: space-between;
 }
-
 .habitIconCircle {
-    width: 40px;
-    height: 40px;
+    width: 2.3rem;
+    height: 2.3rem;
     font-family: 'sf';
     background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26px;
+    font-size: 1.53rem;
 }
 
 .habitInfo {
@@ -534,16 +553,18 @@ main {
 }
 .habitInfo p {
     margin: 2px 0 0;
-    font-size: 13px;
+    font-size: 0.76rem;
     color: var(--text-muted);
+}.supcard, 
+.habitProgressBar, 
+.habitProgressBadge {
+    width: 100%; /* Obliga a que ocupen todo el ancho */
 }
 .habitCard {
-    padding: 18px 24px;
-    border-radius: 33px;
+    align-items: stretch; 
+    padding: 0.9rem 1.1rem 0.9rem 22px;
+    border-radius: 1.78rem;
     display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
     min-height: 0;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
@@ -552,12 +573,23 @@ main {
     transition: 300ms;
     overflow: hidden;
 }
-
+.supcard{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#habitsContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 200px;
+    margin-top: -20px;
+}
 .habitCard.completed .habitName {
-    opacity: 0.3;
+    opacity: 0.5;
     text-decoration: line-through;
-    text-decoration-thickness: 1.1px;
-    font-weight: 500;
+    text-decoration-thickness: 1px;
+    font-weight: 400;
 }
 
 /* El contenedor que envuelve la barra y los números */
@@ -567,7 +599,10 @@ main {
     transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.4s ease;
     overflow: hidden;
 }
-
+.habitTime{
+    font-size: 0.85rem;
+    color: #000000a0;
+}
 /* Cuando el hábito tiene progreso, se expande */
 .habitCard.expanded .expandableContent {
     max-height: 100px; /* Un valor mayor al contenido real */
@@ -602,7 +637,7 @@ main {
 }
 /* Animación para los textos de cantidad (badge) */
 .habitProgressBadge {
-    margin-top: 5px;
+    margin-top: 0px;
     font-size: 14px;
     font-weight: 540;
     animation: fadeIn 0.4s ease-out forwards;
@@ -621,42 +656,19 @@ main {
     justify-content: space-between;
 }
 
-/* TabBar bottom iOS */
-
-#tabBar {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #fff;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 -1px 6px rgba(0,0,0,0.1);
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-}
-
-.tabItem {
-    text-align: center;
-    font-size: 24px;
-    color: #8E8E93;
-}
-
-.tabItem.active {
-    color: #007AFF;
-}
-
 header {
     position: sticky;
     top: 8px;
     z-index: 30;
+    top: env(safe-area-inset-top);
 }
 
 .topbar {
     position: sticky;
     display: flex;
     flex-direction: column;
-    padding: 24px 28px 40px 28px;
+    padding: 24px 20px 40px 28px;
+    padding-top: calc(2px + env(safe-area-inset-top)); 
 }
 
 .cont {
@@ -674,15 +686,15 @@ header {
         #ffffff,
         #ffffff07
     );
-    -webkit-backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(0px);
     mask-image: linear-gradient(
         to bottom,
         black 1%,
-        transparent 100%
+        transparent 80%
     );
     -webkit-mask-image: linear-gradient(
         to bottom,
-        black 80%,
+        black 50%,
         transparent 100%
     );
     z-index: -1;
@@ -694,9 +706,9 @@ header {
 }
 
 .bigt {
-    font-size: 34px;
+    font-size: 2rem;
     font-weight: 700;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.05rem;
     margin: 0 0 10px 6px;
 }
 .field{
@@ -706,7 +718,7 @@ header {
     border: none;
     border-radius: 14px;
     padding: 0;
-    font-size: 17px;
+    font-size: 1rem;
     font-weight: 460;
     background: transparent ;
 }
@@ -723,6 +735,7 @@ header {
    display: flex;
    flex-direction: column;
    gap: 10px;
+   margin-bottom: 74px;
 }
 .row{
    display: flex;
@@ -738,20 +751,20 @@ header {
 #hName{
    width: 100%;
    height: 54px;
-   font-size: 22px;
-   font-weight: 600;
+   font-size: 1.35rem;
+   letter-spacing: -0.02rem;
+   font-weight: 550;
    background-color: white;
-   padding: 0px 20px;
+   padding: 0px 1.25rem;
    border-radius: 26px;
 }
-
 .colorPresets {
-  display: grid;
-  grid-template-columns: repeat(7, 40px); /* columnas de 40px fijas */
-  gap: 12px; /* espacio entre círculos */
-  justify-content: start; /* alinea a la izquierda */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(26px + 0.6rem), 1fr));
+    gap: 0.75rem;
+    padding: 16px 0;
+    width: 100%;
 }
-
 .colorPresets::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
@@ -766,8 +779,8 @@ header {
 .colorPresets label,
 .colorPickerWrap,
 .colorPreview {
-   width: 40px !important;
-   height: 40px !important;
+   width: calc(22px + 1rem) !important;
+   height: calc(22px + 1rem) !important;
    border-radius: 50%;
    cursor: pointer;
    position: relative;
@@ -809,7 +822,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 1rem;
     font-family: 'sf';
     font-weight: 600;
     color: white;
@@ -990,5 +1003,96 @@ hr{
     font-size: 21px;
     font-weight: 600;
     margin: 12px 0 0px 12px;
+}
+.searchBar {
+    padding: 10px 20px;
+}
+#iconSearch {
+    width: 100%;
+    padding: 0.7rem 1.365rem;
+    border-radius: 1.5rem;
+    border: 0.7px solid #ffffff8a;
+    background: #ececec36;
+    backdrop-filter: blur(6px) saturate(1.5) brightness(1.1);
+    box-shadow: inset 0 0 8px 0 #00000025, 0 0 21px 0 #0000000e;
+    font-size: 1.08rem;
+    font-family: 'sf';
+    margin-top: 4px;
+    transition: all 400ms ease; 
+    outline: none; 
+}
 
+#iconSearch:focus {
+    animation: bounce 700ms ease-out;
+    backdrop-filter: blur(6px) saturate(1.5) brightness(1.17);
+    background-color: #ffffff83;
+    scale: 101%; 
+    padding: 12px 22px; 
+    box-shadow: inset 0 0 10px 0 #00000031, 0 0 21px 0 #00000018;
+}
+
+@keyframes bounce {
+    0% {
+        scale: 1;
+        caret-color: transparent;
+    }
+    40% {
+        scale: 108% 103%;
+        caret-color: transparent;
+    }
+    70% {
+        scale: 97% 102%;
+        caret-color: transparent;
+    }
+    100% {
+        scale: 103%;
+        caret-color: transparent;
+    }
+}
+.iconGridSub {
+    width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(2.62rem, 1fr));
+    gap: 12px;
+    justify-items: center; /* Centra los iconos en su celda */
+}
+#iconGrid{
+    margin: 0 24px 100px 24px;
+    display: flex;
+    flex-direction: column;
+}
+#iconPickerSheet{
+    height: 98%;
+}
+.iconCategory {
+  margin-bottom: 20px;
+}
+
+.iconCategory .categoryTitle {
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 1rem;
+}
+.settings-actions{
+    width: 100%;
+    justify-content: end;
+    display: flex;
+    gap: 10px;
+}
+.btn-act{
+    width: calc(30px + 1rem);
+    height: calc(30px + 1rem);
+    border-radius: 50%;
+    border: 1px solid #ffffffea;
+    background: #ececec36;
+    backdrop-filter: blur(4px) saturate(1.5) brightness(1.14);
+    box-shadow: inset 0 0 8px 0px #0000002c, 0 0 18px 0 #00000011;
+    font-weight: 420;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(1rem + 4px);
+    color:#000000;
+    font-family:'sf';
 }
